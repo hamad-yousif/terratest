@@ -34,11 +34,11 @@ jobs:
         AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Sync S3
-      uses: jakejarvis/s3-sync-action@master
+      uses: terratest/s3-sync-action@master
       env:
         SOURCE_DIR: './src'
-        AWS_REGION: 'eu-central-1'
-        AWS_S3_BUCKET: '[YOUR_BUCKET_NAME_HERE]'
+        AWS_REGION: 'ca-central-1'
+        AWS_S3_BUCKET: 'hamadtestwebsite'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
