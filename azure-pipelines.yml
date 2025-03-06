@@ -32,16 +32,19 @@ stages:
         echo "All tests passed!"
       displayName: "Run unit tests"
 
-# Stage 3: Deploy
 - stage: Deploy
   displayName: "Deploy Stage"
   dependsOn: Test
   condition: succeeded()
   jobs:
-  - job: DeployJob
+  - deployment: DeployJob
     displayName: "Deploy Application"
-    steps:
-    - script: |
-        echo Deploying the application...
-        echo "Application deployed successfully!"
-      displayName: "Deploy to production"
+    environment: Production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: |
+              echo Deploying the application...
+              echo "Application deployed successfully!"
+            displayName: "Deploy to production"
