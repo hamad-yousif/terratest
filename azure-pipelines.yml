@@ -1,33 +1,47 @@
-# Customized pipeline
 trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-variables:
-  buildConfiguration: Release
+stages:
 
-steps:
-- script: echo "Starting the pipeline!"
-  displayName: 'Run a one-line script'
+# Stage 1: Build
+- stage: Build
+  displayName: "Build Stage"
+  jobs:
+  - job: BuildJob
+    displayName: "Run Build"
+    steps:
+    - script: |
+        echo Building the application...
+        mkdir build
+        echo "Build files" > build/output.txt
+      displayName: "Build the application"
 
-- script: |
-    echo "Building the project..."
-    echo "Build configuration: $(buildConfiguration)"
-  displayName: 'Run a multi-line script'
+# Stage 2: Test
+- stage: Test
+  displayName: "Test Stage"
+  dependsOn: Build
+  jobs:
+  - job: TestJob
+    displayName: "Run Tests"
+    steps:
+    - script: |
+        echo Running tests...
+        echo "All tests passed!"
+      displayName: "Run unit tests"
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: $(System.DefaultWorkingDirectory)
-    includeRootFolder: false
-    archiveType: zip
-    archiveFile: $(Build.ArtifactStagingDirectory)/output.zip
-    replaceExistingArchive: true
-  displayName: 'Archive build outputs'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    artifactName: drop
-    pathToPublish: $(Build.ArtifactStagingDirectory)
-  displayName: 'Publish build artifacts'
+# Stage 3: Deploy
+- stage: Deploy
+  displayName: "Deploy Stage"
+  dependsOn: Test
+  condition: succeeded()
+  jobs:
+  - job: DeployJob
+    displayName: "Deploy Application"
+    steps:
+    - script: |
+        echo Deploying the application...
+        echo "Application deployed successfully!"
+      displayName: "Deploy to production"
